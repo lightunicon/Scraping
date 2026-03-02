@@ -1,0 +1,18 @@
+{
+  "name": "scraping",
+  "version": "1.0.0",
+  "description": "Scraping and lead enrichment for permit/CoStar workflows",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "scrape:boca": "node scrapers/boca-scraper.js"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0",
+    "dotenv": "^16.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
