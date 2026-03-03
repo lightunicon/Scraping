@@ -9,8 +9,9 @@
     "scrape:boca": "node scrapers/boca-scraper.js"
   },
   "dependencies": {
-    "playwright": "^1.49.0",
-    "dotenv": "^16.4.0"
+    "dotenv": "^16.4.0",
+    "google-search-results-nodejs": "^2.1.0",
+    "playwright": "^1.49.0"
   },
   "engines": {
     "node": ">=18"
