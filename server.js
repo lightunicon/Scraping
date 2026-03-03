@@ -5,9 +5,8 @@
  *   Response: JSON with { links, savedPaths }
  */
 import http from "http";
-import { scrapeBocaBusinessFiles } from "./scrapers/boca-scraper.js";
-
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+import { PORT } from "./config.js";
+import { handleNewBusinessFiles, handleHealthCheck } from "./routes/boca.js";
 
 function sendJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
@@ -18,30 +17,14 @@ function sendJson(res, statusCode, payload) {
   res.end(body);
 }
 
-const server = http.createServer(async (req, res) => {
-  if (req.method === "POST" && req.url === "/api/boca/new-business-files") {
-    try {
-      const result = await scrapeBocaBusinessFiles({ headless: true });
-      return sendJson(res, 200, {
-        success: true,
-        links: result.links,
-        savedPaths: result.savedPaths,
-      });
-    } catch (err) {
-      console.error("Boca scrape failed:", err);
-      return sendJson(res, 500, {
-        success: false,
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
-  }
+const routes = [
+  { method: "POST", url: "/api/boca/new-business-files", handler: handleNewBusinessFiles },
+  { method: "GET",  url: "/",                            handler: handleHealthCheck },
+];
 
-  if (req.method === "GET" && req.url === "/") {
-    return sendJson(res, 200, {
-      ok: true,
-      message: "Boca scraper API is running",
-    });
-  }
+const server = http.createServer((req, res) => {
+  const route = routes.find((r) => r.method === req.method && r.url === req.url);
+  if (route) return route.handler(req, res, sendJson);
 
   res.statusCode = 404;
   res.end("Not found");
